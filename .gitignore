@@ -1,0 +1,9 @@
+.env
+deployment_config.json
+__pycache__/
+*.pyc
+.adk/
+mcp_debug.log
+*.log
+node_modules/
+.venv/
