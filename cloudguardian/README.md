@@ -28,6 +28,7 @@ generates postmortems automatically.
 - OpenTelemetry → Dynatrace
 
 ## Live Demo
+Web UI: https://cloudguardian-ui-118329824935.us-central1.run.app
 API: https://cloudguardian-118329824935.us-central1.run.app
 
 ## Setup

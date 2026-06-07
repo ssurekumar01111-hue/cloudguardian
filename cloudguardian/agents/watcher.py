@@ -1,7 +1,17 @@
+from cloudguardian.telemetry import tracer
+import time
 import os
+import sys
+import shutil
 from google.adk.agents import LlmAgent
 from google.adk.tools.mcp_tool.mcp_toolset import MCPToolset, StdioConnectionParams, StdioServerParameters
-from cloudguardian.telemetry import tracer
+
+def on_agent_start(session_id: str):
+    with tracer.start_as_current_span("watcher_agent.execute") as span:
+        span.set_attribute("session.id", session_id)
+        span.set_attribute("agent.name", "watcher_agent")
+        span.set_attribute("mcp.server", "dynatrace")
+        span.set_attribute("timestamp", time.time())
 
 dt_env = os.environ.copy()
 dt_env["DT_ENVIRONMENT"] = os.environ.get("DT_ENVIRONMENT", "")
@@ -9,13 +19,16 @@ dt_env["DT_PLATFORM_TOKEN"] = os.environ.get("DT_PLATFORM_TOKEN", "")
 dt_env["DT_MCP_LOG_LEVEL"] = "ERROR"
 dt_env["DT_MCP_DISABLE_TELEMETRY"] = "true"
 
-wrapper_path = os.path.normpath(os.path.join(os.path.dirname(__file__), '..', 'mcp_wrapper.py'))
+WRAPPER_PATH = os.path.join(
+    os.path.dirname(os.path.dirname(os.path.abspath(__file__))), 
+    'mcp_wrapper.py'
+)
 
 dt_mcp_toolset = MCPToolset(
     connection_params=StdioConnectionParams(
         server_params=StdioServerParameters(
-            command="python",
-            args=[wrapper_path],
+            command=sys.executable,
+            args=[WRAPPER_PATH],
             env=dt_env
         )
     )
