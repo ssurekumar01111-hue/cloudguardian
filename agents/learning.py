@@ -1,5 +1,5 @@
 from google.adk.agents import LlmAgent
-from cloudguardian.telemetry import tracer
+from ..telemetry import tracer
 
 with tracer.start_as_current_span("agent.init") as span:
     span.set_attribute("agent.name", "learning_agent")

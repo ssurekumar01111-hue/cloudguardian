@@ -1,15 +1,23 @@
+import os
 from opentelemetry import trace
 from opentelemetry.sdk.trace import TracerProvider
 from opentelemetry.sdk.trace.export import BatchSpanProcessor
 from opentelemetry.exporter.otlp.proto.http.trace_exporter import OTLPSpanExporter
 from opentelemetry.sdk.resources import Resource
-import os
+
+try:
+    from openinference.instrumentation.google_adk import GoogleADKInstrumentor
+    HAS_INSTRUMENTOR = True
+except ImportError:
+    HAS_INSTRUMENTOR = False
 
 def setup_telemetry():
     resource = Resource.create({
         "service.name": "cloudguardian",
-        "service.version": "1.0.0",
-        "deployment.environment": "production"
+        "service.version": "2.1.0",
+        "deployment.environment": "production",
+        "cloud.provider": "gcp",
+        "cloud.platform": "cloud_run"
     })
 
     exporter = OTLPSpanExporter(
@@ -22,6 +30,10 @@ def setup_telemetry():
     provider = TracerProvider(resource=resource)
     provider.add_span_processor(BatchSpanProcessor(exporter))
     trace.set_tracer_provider(provider)
+
+    if HAS_INSTRUMENTOR:
+        GoogleADKInstrumentor().instrument(tracer_provider=provider)
+
     return trace.get_tracer("cloudguardian")
 
 tracer = setup_telemetry()

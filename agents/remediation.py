@@ -1,4 +1,4 @@
-from cloudguardian.telemetry import tracer
+from ..telemetry import tracer
 import time
 from google.adk.agents import LlmAgent
 

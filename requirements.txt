@@ -4,3 +4,4 @@ mcp==1.27.1
 opentelemetry-sdk
 opentelemetry-exporter-otlp-proto-http
 opentelemetry-api
+openinference-instrumentation-google-adk

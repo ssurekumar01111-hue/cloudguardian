@@ -1,0 +1,9 @@
+{
+  "app_name": "app",
+  "user_id": "dt-otel-test",
+  "session_id": "6aae9a24-4972-43b6-96fe-a18b96722f1f",
+  "new_message": {
+    "role": "user",
+    "parts": [{"text": "Check for active Dynatrace problems"}]
+  }
+}
