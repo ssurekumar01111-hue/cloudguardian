@@ -31,7 +31,7 @@ generates postmortems automatically.
 
 ## Live Demo
 - Web UI: https://cloudguardian-ui-118329824935.us-central1.run.app
-- API: https://cloudguardian-118329824935.us-central1.run.app
+
 - Demo Video: https://youtu.be/800y9S81vOM
 
 ## Setup
