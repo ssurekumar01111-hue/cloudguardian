@@ -2,40 +2,50 @@ import subprocess
 import sys
 import os
 import threading
+import shutil
+import platform
 
 def main():
     env = os.environ.copy()
     
-    # Find node and mcp-server-dynatrace with explicit fallback paths
-    import shutil
-    node = shutil.which('node') or '/usr/bin/node' or '/usr/local/bin/node'
-    mcp = (shutil.which('mcp-server-dynatrace') or 
-           '/usr/local/bin/mcp-server-dynatrace' or
-           '/usr/bin/mcp-server-dynatrace')
+    print(f"MCP_WRAPPER: platform={platform.system()}", 
+          file=sys.stderr, flush=True)
     
-    # Log to stderr for debugging
-    print(f"MCP_WRAPPER: node={node}, mcp={mcp}", file=sys.stderr, flush=True)
-    print(f"MCP_WRAPPER: DT_ENV={env.get('DT_ENVIRONMENT','NOT SET')}", file=sys.stderr, flush=True)
+    if platform.system() == "Windows":
+        # On Windows, find and run the .cmd file directly via shell
+        mcp_cmd = shutil.which('mcp-server-dynatrace.cmd') or \
+                  shutil.which('mcp-server-dynatrace')
+        print(f"MCP_WRAPPER: cmd={mcp_cmd}", 
+              file=sys.stderr, flush=True)
+        proc = subprocess.Popen(
+            [mcp_cmd],
+            stdin=subprocess.PIPE,
+            stdout=subprocess.PIPE,
+            stderr=subprocess.PIPE,
+            env=env,
+            text=True,
+            bufsize=1,
+            shell=True
+        )
+    else:
+        # On Linux (Cloud Run), use node + binary directly
+        node = shutil.which('node') or '/usr/bin/node'
+        mcp = (shutil.which('mcp-server-dynatrace') or
+               '/usr/local/bin/mcp-server-dynatrace')
+        print(f"MCP_WRAPPER: node={node}, mcp={mcp}", 
+              file=sys.stderr, flush=True)
+        proc = subprocess.Popen(
+            [node, mcp],
+            stdin=subprocess.PIPE,
+            stdout=subprocess.PIPE,
+            stderr=subprocess.PIPE,
+            env=env,
+            text=True,
+            bufsize=1
+        )
     
-    if not os.path.exists(mcp):
-        # Try finding via npm global prefix
-        try:
-            npm_prefix = subprocess.check_output(['npm', 'prefix', '-g'], text=True).strip()
-            mcp = os.path.join(npm_prefix, 'bin', 'mcp-server-dynatrace')
-            print(f"MCP_WRAPPER: found via npm prefix: {mcp}", file=sys.stderr, flush=True)
-        except Exception as e:
-            print(f"MCP_WRAPPER: npm prefix failed: {e}", file=sys.stderr, flush=True)
-    
-    proc = subprocess.Popen(
-        [node, mcp],
-        stdin=subprocess.PIPE,
-        stdout=subprocess.PIPE,
-        stderr=subprocess.PIPE,
-        env=env,
-        text=True,
-        bufsize=1
-    )
-    print(f"MCP_WRAPPER: spawned pid={proc.pid}", file=sys.stderr, flush=True)
+    print(f"MCP_WRAPPER: spawned pid={proc.pid}", 
+          file=sys.stderr, flush=True)
 
     def forward_stdin():
         try:
@@ -48,7 +58,8 @@ def main():
     def read_stderr():
         try:
             for line in proc.stderr:
-                print(f"MCP_SERVER: {line.rstrip()}", file=sys.stderr, flush=True)
+                print(f"MCP_SERVER: {line.rstrip()}", 
+                      file=sys.stderr, flush=True)
         except: pass
 
     threading.Thread(target=forward_stdin, daemon=True).start()
