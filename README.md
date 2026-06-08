@@ -11,6 +11,8 @@ remediations with human approval gates, executes fixes, and
 generates postmortems automatically.
 
 ## Architecture
+![CloudGuardian Architecture](docs/architecture.png)
+
 - **Supervisor** — orchestrates the full workflow
 - **WatcherAgent** — monitors Dynatrace for active problems
 - **TriageAgent** — investigates root cause using DQL queries
