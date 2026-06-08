@@ -10,6 +10,17 @@ infrastructure via Dynatrace, investigates incidents, proposes
 remediations with human approval gates, executes fixes, and 
 generates postmortems automatically.
 
+## Key Capabilities
+
+✓ Predict outages before they happen
+✓ Investigate incidents using Dynatrace MCP
+✓ Match against historical incidents
+✓ Simulate remediation actions
+✓ Require human approval for critical changes
+✓ Execute operational fixes
+✓ Verify recovery automatically
+✓ Generate postmortems
+
 ## Architecture
 ![CloudGuardian Architecture](docs/architecture.png)
 
