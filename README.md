@@ -11,15 +11,14 @@ remediations with human approval gates, executes fixes, and
 generates postmortems automatically.
 
 ## Key Capabilities
-
-✓ Predict outages before they happen
-✓ Investigate incidents using Dynatrace MCP
-✓ Match against historical incidents
-✓ Simulate remediation actions
-✓ Require human approval for critical changes
-✓ Execute operational fixes
-✓ Verify recovery automatically
-✓ Generate postmortems
+✓ Monitor Dynatrace for active problems via MCP
+✓ Investigate root cause using live DQL queries  
+✓ Match against historical incident patterns
+✓ Propose remediation options with risk/success scores
+✓ Require human approval before executing changes
+✓ Execute approved remediations autonomously
+✓ Generate structured postmortems automatically
+✓ Ship agent traces to Dynatrace via OpenTelemetry
 
 ## Architecture
 ![CloudGuardian Architecture](docs/architecture.png)
@@ -39,6 +38,13 @@ generates postmortems automatically.
 - Vertex AI Agent Platform
 - Cloud Run
 - OpenTelemetry → Dynatrace
+
+## Agent Builder Integration
+CloudGuardian is built with Google Cloud Agent Builder framework 
+(ADK 2.1.0) — the official SDK for Vertex AI Agent Platform. 
+The cloudguardian-supervisor agent is registered on Agent Platform 
+and the full 7-agent system runs via ADK runtime on Cloud Run.
+
 
 ## Live Demo
 - Web UI: https://cloudguardian-ui-118329824935.us-central1.run.app
